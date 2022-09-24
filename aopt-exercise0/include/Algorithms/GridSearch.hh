@@ -41,10 +41,10 @@ namespace AOPT {
             // iterate the 2d grid with for loop
             // convert to uniform grid for simplicity
             const Vec& step = (_x_u - _x_l) / n_cells_;
-            for (double i = _x_l(0); i <= _x_u(0); i = i + step(0)) {
-                for (double j = _x_l(1); j <= _x_u(1); j = j + step(1)) {
-                    Vec p(2);
-                    p << i,j;
+            Vec p(2); // current iterated point
+            for (double xp = _x_l(0); xp <= _x_u(0); xp = xp + step(0)) {
+                for (double yp = _x_l(1); yp <= _x_u(1); yp = yp + step(1)) {
+                    p << xp,yp;
                     if (_func->eval_f(p) < fmin) {
                         x_min = p;
                         fmin = _func->eval_f(p);
@@ -83,8 +83,13 @@ namespace AOPT {
             //Todo: implement the nd version of the grid search
             // algorithm to find minimum value of a nd quadratic function
             // set f_min with the minimum, which is then stored in the referenced argument _f_min
+            // recursive approach 
+            double xlow = _x_l(0);
+            double step = (_x_u(0) - _x_l(0)) / n_cells_;
 
-            
+            Vec p(n); 
+            int l = n - 1; // recursive level from _x(n-1) to _x(0)
+            grid_search_recursive_helper(_func, xlow, step, l, p, x_min, f_min);
             //------------------------------------------------------//
             _f_min = f_min;
             std::cout << "Minimum value of the function is: " << f_min << " at x:\n" << x_min << std::endl;
@@ -96,6 +101,21 @@ namespace AOPT {
 
     private:
         int n_cells_;
+        int grid_search_recursive_helper(FunctionBase* _func, const double xlow, const double step, int l, Vec& p, Vec& x_min, double& f_min) const {
+            // recursive to 0, evaluate f
+            if (l == 0) {
+                if (_func->eval_f(p) < f_min) {
+                    x_min = p;
+                    f_min = _func->eval_f(p);
+                }
+            } else {
+                for (int i=0; i <= n_cells_; i++) {
+                    p(l) = xlow + i * step;
+                    grid_search_recursive_helper(_func, xlow, step, l-1, p, x_min, f_min);
+                }
+            }
+            return 0;
+        }
     };
 
     //=============================================================================

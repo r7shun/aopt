@@ -20,4 +20,5 @@
 2.1 2D
     - use nested for loop to iterate over whole Grid
 2.2 ND
-    - 
+    - recursive approach to iterate over n dim functions (the idea is that the level of nested for loop is dynamic n)
+    - start from dim n-1 to 0 
