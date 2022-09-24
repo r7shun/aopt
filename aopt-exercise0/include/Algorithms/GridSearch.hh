@@ -38,8 +38,20 @@ namespace AOPT {
             //Todo: implement the 2d version of the grid search
             // algorithm to find minimum value of _func between _x_l and _x_u
             //------------------------------------------------------//
-           
-            
+            // iterate the 2d grid with for loop
+            // convert to uniform grid for simplicity
+            const Vec& step = (_x_u - _x_l) / n_cells_;
+            for (double i = _x_l(0); i <= _x_u(0); i = i + step(0)) {
+                for (double j = _x_l(1); j <= _x_u(1); j = j + step(1)) {
+                    Vec p(2);
+                    p << i,j;
+                    if (_func->eval_f(p) < fmin) {
+                        x_min = p;
+                        fmin = _func->eval_f(p);
+                    }
+                }
+            }
+
             //------------------------------------------------------//
             _f_min = fmin;
             std::cout<<"Minimum value of the function is: "<<fmin<<" at x:\n"<<x_min<<std::endl;

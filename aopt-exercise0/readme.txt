@@ -10,3 +10,14 @@
     -  mismatched types ‘const Eigen::MatrixBase<Derived>’ and ‘double’
          return (0.5*((_x.transpose()*A_*_x)) + b_.transpose()*_x + c_);
         - solution: static_cast<double>
+
+1.2 non-convex function
+    - easy implement
+    - run  ./Build/bin/CsvExporter nonconvex.csv 0 -2 -2 2 2 100 100 
+    - generate nonconvex.png as in pdf
+
+2. Grid Search
+2.1 2D
+    - use nested for loop to iterate over whole Grid
+2.2 ND
+    - 
