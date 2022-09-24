@@ -28,7 +28,9 @@ namespace AOPT {
         inline virtual double eval_f(const Vec &_x) {
             //------------------------------------------------------//
             //Todo: implement the function f(x,y) = 0.5(x^2 + gamma *y^2)
-
+            // x = _x[0];
+            // y = _x[1];
+            return 0.5*(pow(_x(0),2) + gamma_*pow(_x(1),2));
             //------------------------------------------------------//
         }
 

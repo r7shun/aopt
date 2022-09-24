@@ -1,5 +1,4 @@
-.DS_Store/.
-aopt-eigen-tutorial/build/.
-aopt-exercise0/build/.
-
+*.swp
+.DS_Store
+*build*/
 
