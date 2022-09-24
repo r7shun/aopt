@@ -26,7 +26,9 @@ namespace AOPT {
         inline virtual double eval_f(const Vec &_x) {
             //------------------------------------------------------//
             //Todo: implement the function f(x,y) = (y-x^2)^2+cos^2(4*y)*(1-x)^2+x^2+y^2
-            
+            return pow((_x(1) - pow(_x(0),2)),2) 
+                    + pow(cos(4*_x(1)),2)*pow((1-_x(0)),2) 
+                    + pow(_x(0),2) + pow(_x(1),2);
             //------------------------------------------------------//
         }
 
