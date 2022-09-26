@@ -130,7 +130,15 @@ TEST(EigenTutorial, MatrixAssignment_sparse){
   // | 0	0	0	0	0  |
   // | 0	0	14	0	8  |
   /* TODO */
-  
+   sparseA.resize(5,5);
+  triplets.push_back(T(0,1,3));
+  triplets.push_back(T(1,0,22));
+  triplets.push_back(T(1,4,17));
+  triplets.push_back(T(2,0,7));
+  triplets.push_back(T(2,1,5));
+  triplets.push_back(T(2,3,1));
+  triplets.push_back(T(4,2,14));
+  triplets.push_back(T(4,4,8));
   /* end todo */
 
   sparseA.setFromTriplets(triplets.begin(), triplets.end());
