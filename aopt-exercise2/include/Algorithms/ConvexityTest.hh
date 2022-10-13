@@ -2,7 +2,7 @@
 
 #include <Utils/RandomNumberGenerator.hh>
 #include <FunctionBase/FunctionBase.hh>
-
+using namespace std;
 //== NAMESPACES ===================================================================
 
 namespace AOPT {
@@ -38,9 +38,29 @@ namespace AOPT {
 
             //------------------------------------------------------//
             //Todo: Add your code here
-           
+            double theta;
+            double d_theta = 1.0 / n_evals;
+            int cnt_t = 0;
+            while (cnt_t != max_sampling_points) { // sample max_sampling_points times
+                Vec x = rng.get_random_nd_vector(n);
+                Vec y = rng.get_random_nd_vector(n); // generate two n-dimensional random points
+                theta = 0.0;
+                for(int k = 0; k < n_evals; k++) { // θ increased by a fixed delta n_evals-1 times.
+                    Vec p = theta*x +(1-theta)*y;
+                    if (_function->eval_f(p) > (theta*_function->eval_f(x) + (1-theta)*_function->eval_f(y))) {
+                        Eigen::IOFormat fmt(Eigen::StreamPrecision, 0, ", ", "\n", "[", "]");
+                        cout << "The function is not convex at " << p.transpose().format(fmt) << endl;
+                        return false;
+                    }
+                        
+                    theta = theta + d_theta;
+                }
+                cnt_t++;
+            }
+            std::cout << "We assume the function is convex after " << max_sampling_points << " times sampling." << endl;
             //------------------------------------------------------//
-            return false;
+            //return false;
+            return true; // changed here to true because otherwise needs "goto"
         }
 
 
