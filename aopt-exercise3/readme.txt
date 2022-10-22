@@ -1,8 +1,8 @@
-1. QCQP to SOCP - 
+1. QCQP to SOCP : Hamedi Zahra
 
-2. Linear Programming - 
+2. Linear Programming : Colmenar Herrera Marta
 
-3. Programming Exercise - Shunyu Wu
+3. Programming Exercise : Shunyu Wu
     - SpringElement2D
         - With the help of the Mass Spring System - introduction video, it's quite straight forword to calculate gradient and hessian. 
     - setup spring graph()
