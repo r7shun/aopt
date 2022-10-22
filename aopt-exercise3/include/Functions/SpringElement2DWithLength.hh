@@ -68,7 +68,6 @@ namespace AOPT {
                      daxay,  dayay, -daxay, -dayay,
                     -daxax, -daxay,  daxax,  daxay,
                     -daxay, -dayay,  daxay,  dayay;
-
             //------------------------------------------------------//
         }
     };
