@@ -29,7 +29,7 @@ namespace AOPT {
         inline virtual double eval_f(const Vec &_x, const Vec &_coeffs) override {
             //------------------------------------------------------//
             //Todo: implement the function f(x) = 1/2 * k * ((x[0] - x[2])^2 + (x[1] - x[3])^2)
-            
+            return 0.5 * _coeffs[0] * (std::pow(_x[0] - _x[2], 2) + std::pow(_x[1] - _x[3], 2));
             
             //------------------------------------------------------//
         }
@@ -43,7 +43,7 @@ namespace AOPT {
         inline virtual void eval_gradient(const Vec &_x, const Vec &_coeffs, Vec &_g) override {
             //------------------------------------------------------//
             //Todo: implement the gradient and store in _g
-            
+            _g << _coeffs[0]*(_x[0]-_x[2]), _coeffs[0]*(_x[1]-_x[3]), _coeffs[0]*(_x[2]-_x[0]), _coeffs[0]*(_x[3]-_x[1]);
             
             //------------------------------------------------------//
         }
@@ -58,7 +58,10 @@ namespace AOPT {
         inline virtual void eval_hessian(const Vec &_x, const Vec &_coeffs, Mat &_H) override {
             //------------------------------------------------------//
             //Todo: implement the hessian matrix and store in _H
-            
+            _H <<   _coeffs[0],           0, -_coeffs[0],           0,
+                    0,           _coeffs[0],           0, -_coeffs[0],
+                    -_coeffs[0],          0,  _coeffs[0],           0,
+                    0,          -_coeffs[0],           0,  _coeffs[0];
             
             //------------------------------------------------------//
         }
