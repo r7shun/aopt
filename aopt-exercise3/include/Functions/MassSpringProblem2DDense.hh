@@ -67,8 +67,12 @@ namespace AOPT {
             //TODO: assemble function values of all spring elements
             //use vector xe_ to store the local coordinates of two nodes of every spring
             //then pass it to func_.eval_f(...)
-            
-            
+            for (size_t i = 0; i < springs_.size(); i++) {
+                const Edge& spring = springs_[i];
+                xe_ << _x[2*spring.first], _x[2*spring.first+1], _x[2*spring.second], _x[2*spring.second+1];
+                coeff << ks_[i], ls_[i];
+                energy += func_.eval_f(xe_, coeff);
+            }
             //------------------------------------------------------//
 
             return energy;
@@ -95,7 +99,18 @@ namespace AOPT {
             //------------------------------------------------------//
             //TODO: assemble local gradient vector to the global one
             //use ge_ to store the result of the local gradient
-            
+            for (size_t i = 0; i < springs_.size(); i++) {
+                const auto& spring = springs_[i];
+                xe_ << _x[2*spring.first], _x[2*spring.first+1], _x[2*spring.second], _x[2*spring.second+1];
+                coeff << ks_[i], ls_[i];
+                ge_.setZero();
+                func_.eval_gradient(xe_, coeff, ge_);
+
+                _g[2*spring.first] += ge_[0];
+                _g[2*spring.first+1] += ge_[1];
+                _g[2*spring.second] += ge_[2];
+                _g[2*spring.second+1] += ge_[3];
+            }
             
             //------------------------------------------------------//
         }
@@ -117,7 +132,40 @@ namespace AOPT {
             //------------------------------------------------------//
             //TODO: assemble local hessian matrix to the global one
             //use he_ to store the local hessian matrix
-            
+            for (size_t i = 0; i < springs_.size(); i++) {
+                const auto& spring = springs_[i];
+                const int ax = 2*spring.first;
+                const int ay = 2*spring.first+1;
+                const int bx = 2*spring.second;
+                const int by = 2*spring.second+1;
+
+                xe_ << _x[ax], _x[ay], _x[bx], _x[by];
+                coeff << ks_[i], ls_[i];
+                he_.setZero();
+                func_.eval_hessian(xe_, coeff, he_);
+
+                // fill local block to global hessian
+                _h(ax, ax) += he_.block<2, 2>(0, 0)(0, 0);
+                _h(ax, ax+1) += he_.block<2, 2>(0, 0)(0, 1);
+                _h(ax+1, ax) += he_.block<2, 2>(0, 0)(1, 0);
+                _h(ax+1, ax+1) += he_.block<2, 2>(0, 0)(1, 1);
+
+                _h(ax, bx) += he_.block<2, 2>(0, 2)(0, 0);
+                _h(ax, bx+1) += he_.block<2, 2>(0, 2)(0, 1);
+                _h(ax+1, bx) += he_.block<2, 2>(0, 2)(1, 0);
+                _h(ax+1, bx+1) += he_.block<2, 2>(0, 2)(1, 1);
+
+                _h(bx, ax) += he_.block<2, 2>(2, 0)(0, 0);
+                _h(bx, ax+1) += he_.block<2, 2>(2, 0)(0, 1);
+                _h(bx+1, ax) += he_.block<2, 2>(2, 0)(1, 0);
+                _h(bx+1, ax+1) += he_.block<2, 2>(2, 0)(1, 1);
+
+                _h(bx, bx) += he_.block<2, 2>(2, 2)(0, 0);
+                _h(bx, bx+1) += he_.block<2, 2>(2, 2)(0, 1);
+                _h(bx+1, bx) += he_.block<2, 2>(2, 2)(1, 0);
+                _h(bx+1, bx+1) += he_.block<2, 2>(2, 2)(1, 1);
+            }
+
             //------------------------------------------------------//
         }
 

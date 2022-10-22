@@ -80,17 +80,16 @@ namespace AOPT {
                 if (j > 0) { // vertical lines
                     sg_.add_edge(vp_idx, vp_idx-n_grid_x_-1);
                     if (i < n_grid_x_) {// top-left to bottom-right diag
-                    sg_.add_edge(vp_idx, vp_idx-n_grid_x_);
+                    sg_.add_edge(vp_idx, vp_idx-n_grid_x_, 1.0, l);
                     }
                     if (i > 0) { // top-right to bottom-left diag
-                        sg_.add_edge(vp_idx, vp_idx-n_grid_x_-2);
+                        sg_.add_edge(vp_idx, vp_idx-n_grid_x_-2, 1.0, l);
                     }
                 }
                 
             }
         }
-        
-        
+
         //------------------------------------------------------//
     }
 
