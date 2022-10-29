@@ -29,13 +29,12 @@ int main(int _argc, const char* _argv[]) {
     //NOTE: you can change the variables name if you want
     //check
     
-    /*AOPT::OptimalityChecker oc;
+    AOPT::OptimalityChecker oc;
     if(oc.is_KKT_satisfied(&obj_func, ineq_cons, eq_cons, x, lambda, nu))
         std::cout<<"\nThe query point satisfies the KKT condition."<<std::endl;
     else
         std::cout<<"\nThe query point does NOT satisfy the KKT condition."<<std::endl;
-    */
-
+    
     return 0;
 }
 

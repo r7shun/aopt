@@ -51,7 +51,22 @@ namespace AOPT {
         /** evaluates the quadratic function's gradient
          * \param _x the point on which to evaluate the function
          * \param _g gradient output */
-        inline virtual void eval_gradient(const Vec &_x, Vec &_g) {}
+        inline virtual void eval_gradient(const Vec &_x, Vec &_g) {
+            // f(x) = 1/2 x^T A x + b^T x + c  with x in R^n
+            //  f'(x) = sum_{j=0}^n ( a_{ij} * x_j ) + sum_{j=0}^n ( a_{ji} * x_j ) + b
+            Vec dxax(n_);
+            for (size_t i = 0; i < n_; i++) {
+            //     for (size_t j = 0; j < n_; j++) {
+            //        dxax[i] += A_(i, j) * _x[j];
+            //    }
+            //    for (size_t j = 0; j < n_; j++) {
+            //        dxax[i] += A_(j, i) * _x[j];
+            //    }
+               
+               dxax[i] = A_.col(i).cwiseProduct(_x).sum() + A_.row(i).lazyProduct(_x);
+            }
+            _g << .5 * dxax + b_;
+        }
 
         /** evaluates the quadratic function's Hessian
          * \param _x the point on which to evaluate the Hessian.
