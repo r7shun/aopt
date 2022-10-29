@@ -51,7 +51,18 @@ namespace AOPT {
             //6. check gradient (cond. 4.)
             //------------------------------------------------------//
 
+            // 1
             assert(_objective->n_unknowns() == _query_point.size());
+            if(_inequality_constraints.empty() && _equality_constraints.empty()) {
+                Vec g_eval(_objective->n_unknowns());
+                g_eval.setZero();
+                _objective->eval_gradient(_query_point, g_eval);
+                if(g_eval.norm() < eps_) return true;
+                else return false;
+            } else if(_inequality_constraints.size() != _lambda.size() || _equality_constraints.size() != _nu.size()) 
+                return false;
+
+            
             // 2
             for (size_t i = 0; i < _inequality_constraints.size(); i++) {
                 assert(_inequality_constraints[i]->n_unknowns() == _query_point.size());
@@ -82,21 +93,23 @@ namespace AOPT {
             Vec g_sum(_objective->n_unknowns());
             Vec g_eval(_objective->n_unknowns());
             g_sum.setZero();
-            const auto add_g = [_query_point](Vec g_sum, FunctionBase *f, Vec g_eval, const double factor = 0.) {
-                g_eval.setZero();
-                f->eval_gradient(_query_point, g_eval);
-                g_sum += factor * g_eval;
-            };
+            g_eval.setZero();
+            _objective->eval_gradient(_query_point, g_eval);
+            g_sum = g_eval;
 
-            add_g(g_sum, _objective, g_eval);
 
-            for (size_t i = 0; i < _inequality_constraints.size(); i++) 
-                add_g(g_sum, _inequality_constraints[i], g_eval, _lambda[i]);
-            
-            for (size_t i = 0; i < _equality_constraints.size(); i++)
-                add_g(g_sum, _equality_constraints[i], g_eval, _nu[i]);
-            
-            if (g_sum.cwiseAbs().maxCoeff() > eps_) 
+            for (size_t i = 0; i < _inequality_constraints.size(); i++) {
+                _inequality_constraints[i]->eval_gradient(_query_point, g_eval);
+                g_sum += _lambda[i] * g_eval;
+            }
+
+            for (size_t i = 0; i < _equality_constraints.size(); i++) {
+                _equality_constraints[i]->eval_gradient(_query_point, g_eval);
+                g_sum += _nu[i] * g_eval;
+
+            }
+
+            if (g_sum.norm() > eps_) 
                 return false;
             // if all pass
             return true;

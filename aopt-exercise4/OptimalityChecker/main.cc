@@ -14,15 +14,40 @@ int main(int _argc, const char* _argv[]) {
     //Todo: set up the optimization problem by populating the various
     //matrices and vectors coefficients
     //1. set objective function
-    
+    A << 2, 0,
+         0, -4;
+    b << 0, 0;
+    AOPT::FunctionQuadraticND obj_func(A, b, 0);
+
     //2. inequality constraints
+    std::vector<AOPT::FunctionBase*> ineq_cons;
+    A << 2, 0,
+              0, 0;
+    b<< 8, -1;
+    ineq_cons.push_back(new AOPT::FunctionQuadraticND(A, b, 14));
+
+    A.setZero();
+    b << -1, 0;
+    ineq_cons.push_back(new AOPT::FunctionQuadraticND(A, b, -10));
 
     //3. equality constraints
+    std::vector<AOPT::FunctionBase*> eq_cons;
+    A.setZero();
+    b << 1, -1;
+
+    eq_cons.push_back(new AOPT::FunctionQuadraticND(A, b, 4));
+
 
     //4. set lambdas and vs
-   
+   AOPT::FunctionQuadraticND::Vec lambda(2);
+    lambda << 4, 0;
+
+    AOPT::FunctionQuadraticND::Vec nu(1);
+    nu << -12;
+
     //5. set query point
-    
+    AOPT::OptimalityChecker::Vec x(2);
+    x << -2, 2;
     //-------------------------------------------------------------------------------//
 
     //TODO: uncomment this to test your implementation
