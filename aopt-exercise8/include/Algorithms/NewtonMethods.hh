@@ -262,7 +262,44 @@ namespace AOPT {
             //      provided below
             
             //------------------------------------------------------//
+            double fp = std::numeric_limits<double>::max();
+            for (size_t i = 0; i < _max_iters; i++) {
+                // compose A  with hessian and constraints A
+                _problem->eval_hessian(x, H);
+                setup_KKT_matrix(H, _A, K);
+                // compose b
+                _problem->eval_gradient(x, g);
+                rhs.setZero(n + p);
+                rhs.head(n) = -g;
+                // get solution dx
+                solver.compute(K);
+                // assert(solver.info() == Eigen::ComputationInfo::Success);
+                dxl = solver.solve(rhs);
+                dx = dxl.head(n);
+                // do as standard Newton method, copy above
+                // Newton decrement
+                double lambda2 = g.transpose() * (-dx);
 
+                double f = _problem->eval_f(x);
+
+                // print status
+                std::cout << "iter: " << iter
+                          << "   obj = " << f
+                          << "   ||lambda||^2 = " << lambda2 << std::endl;
+
+                if (lambda2 <= eps2 || fp <= f) {
+                    break;
+                }
+
+                // step size
+                double t = LineSearch::backtracking_line_search(_problem, x, g, dx, 1.);
+
+                // update
+                x += t * dx;
+                fp = f;
+
+
+            }
 
             return x;
         }
@@ -275,8 +312,19 @@ namespace AOPT {
 
             //------------------------------------------------------//
             //TODO: project x to the hyperplane Ax = b
-            
-            
+            // https://stackoverflow.com/questions/43378812/sparseqr-for-least-squares/43380842#43380842
+            SMat cA = _A;
+            cA.makeCompressed(); // requirement of SparseQR
+
+            Eigen::SparseQR<SMat, Eigen::COLAMDOrdering<int>> solver(cA);
+            assert(solver.info() == Eigen::ComputationInfo::Success);
+
+            Vec dx(n);
+            // solve the system
+            dx = solver.solve(_b - _A * _x);
+            // compute the new x
+            _x += dx;
+
             //------------------------------------------------------//
 
             // check result
